@@ -1,5 +1,5 @@
 # web-crawl
-Web crawl in Go
+Web crawler in Go
 ### Dependencies
 ```
 go get github.com/PuerkitoBio/goquery
