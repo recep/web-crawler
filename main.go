@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,18 +13,24 @@ import (
 
 func main() {
 
-	url := flag.String("url", "http", "website's url")
+	url := flag.String("url", "", "url of website")
 	flag.Parse()
+
+	if *url == "" {
+		fmt.Println("Please give me a url")
+		return
+	}
 
 	urls, err := urlParse(*url)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
+		return
 	}
 
 	reqUrls := strings.Fields(urls)
 
-	fmt.Printf("%-30s %-10s\n", "Url", "Status Code")
-	fmt.Println(strings.Repeat("-", 45))
+	fmt.Printf("%-90s %s\n", "Url", "Status Code")
+	fmt.Println(strings.Repeat("=", 100))
 
 	for _, uri := range reqUrls {
 		resp, err := http.Get(uri)
@@ -36,7 +41,7 @@ func main() {
 		code := resp.StatusCode
 		c := strconv.Itoa(code)
 
-		fmt.Printf("%-30s", uri)
+		fmt.Printf("%-90s", uri)
 
 		switch code {
 		case 200, 201, 202, 203, 204, 205, 206, 207, 208, 226:
@@ -45,9 +50,12 @@ func main() {
 			color.Yellow(c)
 		case 400, 401, 403, 404, 405, 406, 412, 415:
 			color.Red(c)
-		case 500, 501:
+		case 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511:
 			color.Red(c)
+		default:
+			fmt.Println()
 		}
+		fmt.Println(strings.Repeat("-", 100))
 
 	}
 }
